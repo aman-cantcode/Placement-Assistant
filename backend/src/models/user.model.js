@@ -19,7 +19,39 @@ const userSchema = new Schema(
             type: String, 
             required: [true, "Password is required"] 
         },
+        skills: {
+            type: [String],
+            default: []
+        },
+        branch: {
+            type: String,
+            default: ""
+        },
+        cgpa: {
+            type: Number,
+            min: 0,
+            max: 10,
+            default: null
+        },
+        targetCompanies: {
+            type: [String],
+            default: []
+        },
+        resume: {
+            filename: {
+                type: String,
+            },
+            text: {
+                type: String,
+            },
+            uploadedAt: {
+                type: Date,
+            }
+        },
+
         refreshToken: { type: String },
+        resetPasswordToken: { type: String },
+        resetPasswordExpiry: { type: Date },
     }, 
     { timestamps: true }
 );
