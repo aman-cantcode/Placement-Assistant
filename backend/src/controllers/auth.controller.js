@@ -29,7 +29,7 @@ const generateTokens = async (user) => {
 }
 
 const registerUser = asyncHandler(async (req, res) => {
-    
+
     const { name, email, password } = req.body;
 
     if (!name?.trim() || !email?.trim() || !password) {
@@ -50,11 +50,11 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "An account with this email already exists");
     }
 
-    const user = await User.create({ 
-        name: name.trim(), 
-        email, 
-        password 
-    }); 
+    const user = await User.create({
+        name: name.trim(),
+        email,
+        password
+    });
 
     const { accessToken, refreshToken } = await generateTokens(user);
 
@@ -66,29 +66,29 @@ const registerUser = asyncHandler(async (req, res) => {
         .status(201)
         .cookie("refreshToken", refreshToken, refreshCookieOptions)
         .json(new ApiResponse(
-            201, 
-            { 
-                user: safeUser, 
-                accessToken 
-            }, 
+            201,
+            {
+                user: safeUser,
+                accessToken
+            },
             "Account created"
         ));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    
-    const {email, password} = req.body;
 
-    if(!email?.trim() || !password) {
+    const { email, password } = req.body;
+
+    if (!email?.trim() || !password) {
         throw new ApiError(400, "Email and password are required");
     }
 
     const user = await User.findOne({
         //$or: [{ username }, { email }]
-        email:email.trim().toLowerCase()
+        email: email.trim().toLowerCase()
     });
 
-    if(!user || !(await user.isPasswordCorrect(password))) {
+    if (!user || !(await user.isPasswordCorrect(password))) {
         throw new ApiError(400, "Invalid email or password");
     }
 
@@ -102,9 +102,9 @@ const loginUser = asyncHandler(async (req, res) => {
         .status(200)
         .cookie("refreshToken", refreshToken, refreshCookieOptions)
         .json(new ApiResponse(
-            200, 
-            { 
-                user: safeUser, 
+            200,
+            {
+                user: safeUser,
                 accessToken
             },
             "User logged in"
@@ -113,9 +113,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
-        req.user._id, 
-        { 
-            $unset: { refreshToken: 1 } 
+        req.user._id,
+        {
+            $unset: { refreshToken: 1 }
         }
     );
 
@@ -123,11 +123,47 @@ const logoutUser = asyncHandler(async (req, res) => {
         .status(200)
         .clearCookie("refreshToken", clearCookieOptions)
         .json(new ApiResponse(200, {}, "Logged out"));
-})
+});
 
-export { 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const incomingToken = req.cookies?.refreshToken; //sent by browser(httpOnly)
+
+    if (!incomingToken) {
+        throw new ApiError(401, "No refresh token");
+    }
+
+    let decoded;
+    try {
+        decoded = jwt.verify(incomingToken, process.env.JWT_REFRESH_SECRET);
+    } catch {
+        throw new ApiError(401, "Refresh token expired or invalid");
+    }
+
+    const user = await User.findById(decoded._id);
+    if (!user) {
+        throw new ApiError(401, "Invalid refresh token");
+    }
+
+    // Theft detection: the token is valid but it is not the one we stored,
+    // which means an old (rotated-out) token is being reused.
+    if (user.refreshToken !== incomingToken) {
+        user.refreshToken = undefined; //log user out for safety
+        await user.save({ validateBeforeSave: false });
+        throw new ApiError(401, "Refresh token reuse detected, please log in again");
+    }
+
+    const { accessToken, refreshToken } = await generateTokens(user);
+
+    return res
+        .status(200)
+        .cookie("refreshToken", refreshToken, refreshCookieOptions)
+        .json(new ApiResponse(200, { accessToken }, "Token refreshed"));
+});
+
+export {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    refreshAccessToken
 
- };
+};
