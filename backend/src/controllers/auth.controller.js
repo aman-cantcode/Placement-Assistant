@@ -79,17 +79,17 @@ const loginUser = asyncHandler(async (req, res) => {
     
     const {email, password} = req.body;
 
-    if(!email.trim() || !password) {
-        return new ApiError(400, "Email and password are required");
+    if(!email?.trim() || !password) {
+        throw new ApiError(400, "Email and password are required");
     }
 
-    const user = User.findOne({
+    const user = await User.findOne({
         //$or: [{ username }, { email }]
-        email:email.toLowerCase()
+        email:email.trim().toLowerCase()
     });
 
     if(!user || !(await user.isPasswordCorrect(password))) {
-        return new ApiError(400, "Invalid email or password");
+        throw new ApiError(400, "Invalid email or password");
     }
 
     const { accessToken, refreshToken } = await generateTokens(user);
