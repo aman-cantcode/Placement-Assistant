@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import crypto from "crypto";
+
 
 
 const refreshCookieOptions = {
@@ -160,6 +162,70 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { accessToken }, "Token refreshed"));
 });
 
+
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    if (!email?.trim()) {
+        throw new ApiError(400, "Email is required");
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // always respond with 200 so attackers can't guess registered emails
+    if (user) {
+        const rawToken = crypto.randomBytes(32).toString("hex");
+        user.resetPasswordToken = crypto
+            .createHash("sha256")
+            .update(rawToken)
+            .digest("hex");
+        user.resetPasswordExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+        await user.save({ validateBeforeSave: false });
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${rawToken}`;
+        await sendEmail({
+            to: user.email,
+            subject: "Reset your Placement Assistant password",
+            html: `<p>Hi ${user.name},</p>
+             <p>Click <a href=\"${resetLink}\">here</a> to reset your password.</p>
+             <p>This link is valid for 15 minutes. If you didn't request this, just ignore this email.</p>`,
+        });
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "If that user exists, a reset link has been sent"));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+        throw new ApiError(400, "Token and new password are required");
+    }
+    if (password.length < 6) {
+        throw new ApiError(400, "Password must be at least 6 characters");
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await User.findOne({
+        resetPasswordToken: hashedToken,
+        resetPasswordExpiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+        throw new ApiError(400, "Reset link is invalid or has expired");
+    }
+
+    user.password = password; // pre-save hook hashes it
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiry = undefined;
+    user.refreshToken = undefined; // log out all old sessions
+    await user.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Password reset successful, please log in"));
+});
 export {
     registerUser,
     loginUser,
