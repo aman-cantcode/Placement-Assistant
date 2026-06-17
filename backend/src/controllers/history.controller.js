@@ -126,8 +126,8 @@ const createRoadmap = asyncHandler(async (req, res) => {
         return res
             .status(200)
             .json(new ApiResponse(
-                200, 
-                { roadmap: history.roadmap }, 
+                200,
+                { roadmap: history.roadmap },
                 "Roadmap fetched"
             ));
     }
@@ -153,8 +153,8 @@ const createQuestions = asyncHandler(async (req, res) => {
         return res
             .status(200)
             .json(new ApiResponse(
-                200, 
-                { questions: history.questions }, 
+                200,
+                { questions: history.questions },
                 "Questions fetched"
             ));
     }
@@ -167,6 +167,8 @@ const createQuestions = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, { questions: history.questions }, "Questions generated"));
 });
+
+
 
 const submitAnswers = asyncHandler(async (req, res) => {
     const { answers } = req.body;
@@ -207,3 +209,4 @@ export {
     createQuestions,
     submitAnswers,
 };
+

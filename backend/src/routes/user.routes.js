@@ -9,7 +9,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.use(verifyJWT); // everything below needs a logged in user
+router.use(verifyJWT);
 
 router.get("/me", getCurrentUser);
 router.patch("/me", updateProfile);

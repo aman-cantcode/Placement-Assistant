@@ -8,6 +8,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).select(
         "-password -refreshToken -resetPasswordToken -resetPasswordExpiry -resume.text"
     );
+
     return res.status(200).json(new ApiResponse(
         200,
         user,
@@ -17,11 +18,13 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
     const { name, skills, branch, cgpa, targetCompanies } = req.body;
+    name = name?.trim();
+    branch = branch?.trim().toUpperCase();
 
     const updates = {};
-    if (name?.trim()) updates.name = name.trim();
+    if (name) updates.name = name;
     if (Array.isArray(skills)) updates.skills = skills;
-    if (branch?.trim()) updates.branch = branch.trim();
+    if (branch) updates.branch = branch;
     if (cgpa !== undefined && cgpa !== null && cgpa !== "") {
         const value = Number(cgpa);
         if (Number.isNaN(value) || value < 0 || value > 10) {
@@ -84,4 +87,8 @@ const uploadResume = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { resume: user.resume }, "Resume uploaded"));
 });
 
-export { getCurrentUser, updateProfile, uploadResume };
+export { 
+    getCurrentUser, 
+    updateProfile, 
+    uploadResume 
+};

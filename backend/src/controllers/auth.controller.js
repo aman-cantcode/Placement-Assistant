@@ -194,7 +194,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
             html: `<p>Hi ${user.name},</p>
              <p>Click <a href=\"${resetLink}\">here</a> to reset your password.</p>
              <p>This link is valid for 15 minutes. If you didn't request this, just ignore this email.</p>`,
-        });
+        }); 
     }
 
     return res

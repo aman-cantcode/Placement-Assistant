@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { loginUser, registerUser, logoutUser, refreshAccessToken } from "../controllers/auth.controller.js";
+import {
+  loginUser,
+  registerUser,
+  logoutUser,
+  refreshAccessToken,
+  resetPassword,
+  forgotPassword,
+} from "../controllers/auth.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import rateLimit from "express-rate-limit"
@@ -25,5 +32,7 @@ router.route("/login").post(authLimiter, loginUser);
 
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refresh").post(refreshAccessToken);
+router.route("/forgot-password").post(authLimiter, forgotPassword);
+router.route("/reset-password").post(authLimiter, resetPassword);
 
 export default router;
