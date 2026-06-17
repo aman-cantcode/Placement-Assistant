@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+import { sendEmail } from "../utils/email.js";
 import crypto from "crypto";
 
 
@@ -33,13 +35,15 @@ const generateTokens = async (user) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     const { name, email, password } = req.body;
+    name = name?.trim();
+    email = email?.trim().toLowerCase();
 
-    if (!name?.trim() || !email?.trim() || !password) {
+    if (!name || !email || !password) {
         throw new ApiError(400, "Name, email and password are required");
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!emailRegex.test(email)) {
         throw new ApiError(400, "Please enter a valid email address");
     }
 
@@ -47,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Password must be at least 6 characters");
     }
 
-    const existing = await User.findOne({ email: email.toLowerCase() });
+    const existing = await User.findOne({ email });
     if (existing) {
         throw new ApiError(409, "An account with this email already exists");
     }
@@ -80,14 +84,15 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
+    email = email?.trim().toLowerCase();
 
-    if (!email?.trim() || !password) {
+    if (!email || !password) {
         throw new ApiError(400, "Email and password are required");
     }
 
     const user = await User.findOne({
         //$or: [{ username }, { email }]
-        email: email.trim().toLowerCase()
+        email: email
     });
 
     if (!user || !(await user.isPasswordCorrect(password))) {
@@ -165,11 +170,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const forgotPassword = asyncHandler(async (req, res) => {
     const { email } = req.body;
-    if (!email?.trim()) {
+    email = email?.trim().toLowerCase();
+    if (!email) {
         throw new ApiError(400, "Email is required");
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
 
     // always respond with 200 so attackers can't guess registered emails
     if (user) {
@@ -178,7 +184,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
             .createHash("sha256")
             .update(rawToken)
             .digest("hex");
-        user.resetPasswordExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+        user.resetPasswordExpiry = new Date(Date.now() + 15 * 60 * 1000);
         await user.save({ validateBeforeSave: false });
 
         const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${rawToken}`;
@@ -216,7 +222,7 @@ const resetPassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Reset link is invalid or has expired");
     }
 
-    user.password = password; // pre-save hook hashes it
+    user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpiry = undefined;
     user.refreshToken = undefined; // log out all old sessions
@@ -230,6 +236,8 @@ export {
     registerUser,
     loginUser,
     logoutUser,
-    refreshAccessToken
+    refreshAccessToken,
+    forgotPassword,
+    resetPassword
 
 };
