@@ -1,8 +1,8 @@
-import { ApiError } from "../utils/apiError.js";
-import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import { extractTextFromFile } from "../utils/extractText.js";
+import { extractText } from "../utils/extractText.js";
 
 const getCurrentUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).select(

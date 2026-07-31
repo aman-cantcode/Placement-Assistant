@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import { sendEmail } from "../utils/email.js";
+import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 
 
