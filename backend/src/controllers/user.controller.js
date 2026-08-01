@@ -1,3 +1,4 @@
+import fs from "fs";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -17,9 +18,9 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const updateProfile = asyncHandler(async (req, res) => {
-    const { name, skills, branch, cgpa, targetCompanies } = req.body;
+    let { name, skills, branch, cgpa, targetCompanies } = req.body;
     name = name?.trim();
-    branch = branch?.trim().toUpperCase();
+    branch = branch?.trim()?.toUpperCase();
 
     const updates = {};
     if (name) updates.name = name;
