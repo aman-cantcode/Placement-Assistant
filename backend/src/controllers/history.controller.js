@@ -159,7 +159,11 @@ const createQuestions = asyncHandler(async (req, res) => {
             ));
     }
 
-    const result = await generateQuestions(history.jdText);
+    const result = await generateQuestions(
+        history.resumeSnapshot.text,
+        history.jdText
+    );
+    
     history.questions = result.questions.map((q) => ({ question: q }));
     await history.save();
 
