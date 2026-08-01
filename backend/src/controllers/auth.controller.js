@@ -34,7 +34,7 @@ const generateTokens = async (user) => {
 
 const registerUser = asyncHandler(async (req, res) => {
 
-    const { name, email, password } = req.body;
+    let { name, email, password } = req.body;
     name = name?.trim();
     email = email?.trim().toLowerCase();
 
@@ -83,7 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
 
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     email = email?.trim().toLowerCase();
 
     if (!email || !password) {
@@ -169,7 +169,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 
 const forgotPassword = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    let { email } = req.body;
     email = email?.trim().toLowerCase();
     if (!email) {
         throw new ApiError(400, "Email is required");
