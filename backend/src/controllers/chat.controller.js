@@ -28,14 +28,15 @@ const sendMessage = asyncHandler(async (req, res) => {
         chat = await Chat.create({
             history: history._id,
             owner: req.user._id,
-            messages: [],
         });
     }
 
-    const recentMessages = chat.messages.slice(-6).map((m) => ({
-        role: m.role,
-        content: m.content,
-    }));
+    const recentMessages = (chat.messages ?? [])
+        .slice(-6)
+        .map((m) => ({
+            role: m.role,
+            content: m.content,
+        }));
 
     const result = await chatWithAI(
         history.resumeSnapshot.text,

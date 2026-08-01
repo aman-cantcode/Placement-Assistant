@@ -10,10 +10,10 @@ def convert_to_langchain_messages(messages):
     converted = []
 
     for message in messages:
-        if message["role"] == "user":
-            converted.append(HumanMessage(content=message["content"]))
-        elif message["role"] == "assistant":
-            converted.append(AIMessage(content=message["content"]))
+        if message.role == "user":
+            converted.append(HumanMessage(content=message.content))
+        elif message.role == "assistant":
+            converted.append(AIMessage(content=message.content))
 
     return converted
 

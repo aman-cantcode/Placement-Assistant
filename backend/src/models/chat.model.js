@@ -5,14 +5,15 @@ const messageSchema = new Schema(
         role: {
             type: String,
             enum: ["user", "assistant"],
-            required: true
+            required: true,
         },
         content: {
             type: String,
-            required: true
-        }
-    }, {
-        timestamps: true
+            required: true,
+        },
+    },
+    {
+        timestamps: true,
     }
 );
 
@@ -22,14 +23,22 @@ const chatSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "History",
             required: true,
-            unique: true
+            unique: true,
         },
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User",
-            required: true
-        }
+            required: true,
+        },
+
+        messages: {
+            type: [messageSchema],
+            default: [],
+        },
+    },
+    {
+        timestamps: true,
     }
-)
+);
 
 export const Chat = mongoose.model("Chat", chatSchema);
