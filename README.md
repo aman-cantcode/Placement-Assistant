@@ -25,7 +25,6 @@ An AI-powered placement preparation platform. Upload your resume, paste any job 
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [API Reference](#api-reference)
-- [Acknowledgments](#acknowledgments)
 - [License](#license)
 
 ---
