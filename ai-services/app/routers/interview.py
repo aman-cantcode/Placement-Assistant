@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.schemas import QuestionsRequest, RateRequest, RateResult
+from app.schemas import QuestionsRequest, RateRequest, RateResponse, RateResult
 from app.security import verify_internal_key
 from app.chains.questions_chain import questions_chain, QuestionsResult
 
@@ -16,9 +16,23 @@ def generate_questions(request: QuestionsRequest):
 
 from app.chains.rate_chain import rate_chain
 
-@router.post("/interview/rate", response_model=RateResult)
-def rate_answer(request: RateRequest):
-    return rate_chain.invoke({
-        "question": request.question,
-        "answer": request.answer
-    })
+@router.post("/interview/rate", response_model=RateResponse)
+def rate_answers(request: RateRequest):
+
+    ratings = []
+
+    for item in request.items:
+        result = rate_chain.invoke({
+            "jd_text": request.jd_text,
+            "question": item.question,
+            "answer": item.answer,
+        })
+
+        ratings.append(
+            RateResult(
+                rating=result.rating,
+                feedback=result.feedback,
+            )
+        )
+
+    return RateResponse(ratings=ratings)
