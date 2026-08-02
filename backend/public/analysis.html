@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1E6B52" />
+  <title>Analysis — Placement Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/variables.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/dashboard.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="currentColor" />
+        <path d="M9 20a7 7 0 0 1 14 0" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="16" cy="20" r="1.6" fill="white" />
+      </svg>
+      Placement Assistant
+    </a>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <span class="user-avatar" id="user-avatar">··</span>
+        <span id="user-name-display"></span>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="logout-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;"><path d="M15 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h9" /><path d="M10 12h10m0 0-3-3m3 3-3 3" /></svg>
+        Log out
+      </button>
+    </div>
+  </header>
+
+  <main class="container container-narrow">
+    <div class="page-head">
+      <a href="/dashboard.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        Back to dashboard
+      </a>
+
+      <div class="analysis-title-row">
+        <div>
+          <span class="eyebrow page-eyebrow" id="analysis-eyebrow">Analysis</span>
+          <h1 class="page-title" id="analysis-title">Loading…</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <span class="stamp" id="status-stamp"></span>
+          <button type="button" class="btn btn-ghost btn-icon" id="delete-btn" aria-label="Delete this analysis" title="Delete this analysis">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16" /><path d="M9 7V4h6v3" /><path d="M6 7l1 13h10l1-13" /><path d="M10 11v6M14 11v6" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="card" id="state-loading">
+      <div class="loading-block">
+        <div class="dial-loader"></div>
+        <p class="muted">Scoring your resume against this job description — this usually takes a few seconds.</p>
+      </div>
+    </section>
+
+    <section class="card hidden" id="state-failed">
+      <div class="error-block">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4L3 20h18L12 4z" /><path d="M12 10v4" /><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none" /></svg>
+        <h3 style="margin-top: var(--space-3); font-size: var(--fs-h3);">This analysis failed</h3>
+        <p class="muted" style="margin-top: 0.4rem;">Something went wrong scoring this job description. Deleting it and starting a new one usually works.</p>
+        <button type="button" class="btn btn-danger" id="delete-btn-failed" style="margin-top: var(--space-5);">Delete this analysis</button>
+      </div>
+    </section>
+
+    <div id="state-done" class="hidden">
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">ATS result</div>
+        </div>
+        <div class="score-summary">
+          <div id="ats-gauge"></div>
+          <div class="skills-block">
+            <h4>Matching skills</h4>
+            <div class="chip-list" id="matching-skills"></div>
+            <h4>Missing skills</h4>
+            <div class="chip-list" id="missing-skills"></div>
+            <h4>All required skills</h4>
+            <div class="chip-list" id="required-skills"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section-gap">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Learning roadmap</div>
+            <div class="card-subtitle">A plan to close the gap on what's missing.</div>
+          </div>
+        </div>
+        <div id="roadmap-content"></div>
+      </section>
+
+      <section class="card section-gap">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interview practice</div>
+            <div class="card-subtitle">Role-specific questions, with feedback on your answers.</div>
+          </div>
+        </div>
+        <div id="questions-content"></div>
+      </section>
+
+      <section class="card section-gap" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Ask about this role</div>
+            <div class="card-subtitle">Grounded in your resume and this job description.</div>
+          </div>
+        </div>
+        <div class="chat-panel">
+          <div class="chat-messages" id="chat-messages"></div>
+          <form class="chat-form" id="chat-form">
+            <input class="input" type="text" id="chat-input" placeholder="Ask something about this role…" autocomplete="off" />
+            <button type="submit" class="btn" id="chat-btn">Send</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Placement Assistant</span>
+      <span><a href="/about.html">About</a> · <a href="mailto:dashinghero20050506@gmail.com">Contact us</a></span>
+    </div>
+  </footer>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/gauge.js"></script>
+  <script src="/js/analysis.js"></script>
+</body>
+</html>

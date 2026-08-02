@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1E6B52" />
+  <title>Dashboard — Placement Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/variables.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/dashboard.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="currentColor" />
+        <path d="M9 20a7 7 0 0 1 14 0" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="16" cy="20" r="1.6" fill="white" />
+      </svg>
+      Placement Assistant
+    </a>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <span class="user-avatar" id="user-avatar">··</span>
+        <span id="user-name-display">Loading…</span>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="logout-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;"><path d="M15 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h9" /><path d="M10 12h10m0 0-3-3m3 3-3 3" /></svg>
+        Log out
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-head">
+      <span class="eyebrow page-eyebrow">Dashboard</span>
+      <h1 class="page-title" id="welcome-heading">Welcome back</h1>
+      <p class="page-lede">Keep your profile and resume current, then check a new job description whenever you need to.</p>
+    </div>
+
+    <div class="grid-dashboard">
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Your profile</div>
+            <div class="card-subtitle">Used to personalize your roadmap and interview questions.</div>
+          </div>
+        </div>
+        <p class="form-message" id="profile-message"></p>
+        <form id="profile-form" novalidate>
+          <div class="field">
+            <label class="field-label" for="name">Full name</label>
+            <input class="input" type="text" id="name" name="name" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="branch">Branch / major</label>
+              <input class="input" type="text" id="branch" name="branch" placeholder="e.g. Computer Science" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="cgpa">CGPA</label>
+              <input class="input" type="number" id="cgpa" name="cgpa" min="0" max="10" step="0.01" placeholder="e.g. 8.4" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="skills">Skills</label>
+            <input class="input" type="text" id="skills" name="skills" placeholder="React, Node.js, SQL" />
+            <p class="field-hint">Comma-separated.</p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="targetCompanies">Target companies</label>
+            <input class="input" type="text" id="targetCompanies" name="targetCompanies" placeholder="Google, Stripe, ..." />
+            <p class="field-hint">Comma-separated.</p>
+          </div>
+          <button type="submit" class="btn" id="profile-btn">Save profile</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Your resume</div>
+            <div class="card-subtitle">PDF or Word, up to 5&nbsp;MB. Used as the basis for every analysis you run.</div>
+          </div>
+        </div>
+
+        <div class="resume-status is-empty" id="resume-status">
+          <svg id="resume-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z" /><path d="M14 3v5h5" /><path d="M12 11.5v5M9.5 14h5" /></svg>
+          <div>
+            <div class="resume-status-name" id="resume-status-text">No resume uploaded yet</div>
+            <div class="resume-status-date" id="resume-status-date"></div>
+          </div>
+        </div>
+
+        <p class="form-message" id="resume-message"></p>
+        <form id="resume-form" novalidate>
+          <div class="field file-field">
+            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required />
+          </div>
+          <button type="submit" class="btn" id="resume-btn">Upload resume</button>
+        </form>
+      </section>
+    </div>
+
+    <section class="card section-gap">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Check a new job description</div>
+          <div class="card-subtitle">Paste any JD and get your ATS score, matched skills, and a roadmap.</div>
+        </div>
+      </div>
+      <p class="form-message" id="new-analysis-message"></p>
+      <form id="history-form" novalidate>
+        <div class="field">
+          <label class="field-label" for="title">Name this analysis</label>
+          <input class="input" type="text" id="title" name="title" placeholder="e.g. SDE II — Amazon" required />
+        </div>
+        <div class="field">
+          <label class="field-label" for="jdText">Job description</label>
+          <textarea class="textarea" id="jdText" name="jdText" rows="7" placeholder="Paste the full job description here…" required></textarea>
+        </div>
+        <p class="field-hint hidden" id="resume-required-hint">Upload your resume above before running an analysis.</p>
+        <button type="submit" class="btn btn-lg" id="history-btn" style="margin-top: var(--space-2);">Analyze</button>
+      </form>
+    </section>
+
+    <section class="card section-gap" style="margin-bottom: var(--space-8);">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Past analyses</div>
+        </div>
+      </div>
+      <div id="history-list">
+        <div class="skeleton" style="height: 52px; margin-bottom: 10px;"></div>
+        <div class="skeleton" style="height: 52px; margin-bottom: 10px;"></div>
+        <div class="skeleton" style="height: 52px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Placement Assistant</span>
+      <span><a href="/about.html">About</a> · <a href="mailto:dashinghero20050506@gmail.com">Contact us</a></span>
+    </div>
+  </footer>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

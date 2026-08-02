@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1E6B52" />
+  <title>About — Placement Assistant</title>
+  <meta name="description" content="What Placement Assistant does, how it handles your data, and how to reach us." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About — Placement Assistant" />
+  <meta property="og:description" content="What Placement Assistant does, how it handles your data, and how to reach us." />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/variables.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/index.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="currentColor" />
+        <path d="M9 20a7 7 0 0 1 14 0" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        <circle cx="16" cy="20" r="1.6" fill="white" />
+      </svg>
+      Placement Assistant
+    </a>
+    <div class="topbar-right">
+      <a href="/login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="/signup.html" class="btn btn-sm">Get started</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="padding-bottom: var(--space-6);">
+      <div class="container" style="display: block; max-width: var(--content-width-narrow);">
+        <span class="eyebrow">About</span>
+        <h1 class="hero-title" style="font-size: clamp(2rem, 1.7rem + 1.5vw, 3rem);">We built the tool we wish existed during placement season.</h1>
+        <p class="hero-lede" style="max-width: 62ch;">
+          Placement Assistant exists to answer one question clearly: how well do you actually match
+          a given job, and what would close the gap. Everything else — the roadmap, the interview
+          practice, the chat — is built around that one answer.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container-narrow">
+        <h2 class="page-title" style="font-size: var(--fs-h2);">What it actually does</h2>
+        <p class="page-lede" style="max-width: none;">
+          Upload your resume once. From there, every job description you paste in gets its own
+          analysis: an ATS match score with matched and missing skills called out individually, a
+          roadmap built around what's actually missing for that role, a set of interview questions
+          written for that specific job, and a chat that has read both your resume and that JD —
+          not generic advice recycled across every user.
+        </p>
+      </div>
+    </section>
+
+    <section class="tint-band">
+      <div class="container-narrow">
+        <span class="eyebrow">Your data</span>
+        <h2 class="page-title" style="margin-top: 0.75rem; font-size: var(--fs-h2);">How we handle your data</h2>
+        <ul class="trust-list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+            <span>Your login session token lives only in your browser's memory while you're using the app — never somewhere a script could quietly read it later.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+            <span>The token that keeps you logged in over longer periods sits in a cookie your browser controls directly — JavaScript can't touch it at all.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+            <span>If that longer-lived token is ever reused after it's already been replaced — a sign it may have leaked — every session on your account is signed out automatically as a precaution.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+            <span>Passwords are never stored as plain text, and reset links expire after 15 minutes and only work once.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+            <span>Analysis, roadmaps, and interview questions are generated with Google's Gemini models, routed through infrastructure that isn't reachable from the public internet — only our own server can reach it.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="container-narrow">
+        <span class="eyebrow">Cost</span>
+        <h2 class="page-title" style="margin-top: 0.75rem; font-size: var(--fs-h2);">A quick note on cost</h2>
+        <p class="page-lede" style="max-width: none;">
+          There's no payment system here yet — usage is effectively unlimited while the core product
+          is still being built out. That's expected to change eventually, but for now, it's free to use.
+        </p>
+      </div>
+    </section>
+
+    <section class="tint-band">
+      <div class="container-narrow">
+        <span class="eyebrow">FAQ</span>
+        <h2 class="page-title" style="margin-top: 0.75rem; margin-bottom: var(--space-5); font-size: var(--fs-h2);">A few common questions</h2>
+
+        <details class="faq-item" open>
+          <summary>Do I need to re-upload my resume for every job?</summary>
+          <p>No — upload it once and it's reused automatically for every job description you check after that. Each analysis keeps its own snapshot, though, so updating your resume later won't change results you've already generated.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What file formats does it accept for my resume?</summary>
+          <p>PDF and Word documents (.doc / .docx), up to 5&nbsp;MB.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What happens if an analysis fails?</summary>
+          <p>Occasionally the scoring step can fail, usually from a transient issue. You can delete a failed analysis from its page and submit the job description again.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is the chat specific to each job, or shared across all of them?</summary>
+          <p>Specific to each one. The chat for a given analysis only knows about that job description and your resume, not your other analyses.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <div class="container">
+        <h2>Questions, feedback, or something broken?</h2>
+        <p>We'd genuinely like to hear about it.</p>
+        <div class="hero-actions">
+          <a href="mailto:dashinghero20050506@gmail.com" class="btn btn-secondary btn-lg">Contact us</a>
+          <a href="/signup.html" class="btn btn-lg" style="--btn-bg: rgba(255, 255, 255, 0.14); --btn-bg-hover: rgba(255, 255, 255, 0.24); border: 1px solid rgba(255, 255, 255, 0.4);">Get started free</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Placement Assistant</span>
+      <span><a href="/index.html">Home</a> · <a href="mailto:dashinghero20050506@gmail.com">Contact us</a> · <a href="/login.html">Log in</a></span>
+    </div>
+  </footer>
+
+</body>
+</html>
