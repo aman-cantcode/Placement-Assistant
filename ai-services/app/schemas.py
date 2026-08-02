@@ -25,6 +25,7 @@ class RoadmapResponse(BaseModel):
 
 
 class QuestionsRequest(BaseModel):
+    resume_text: str
     jd_text: str
 
 

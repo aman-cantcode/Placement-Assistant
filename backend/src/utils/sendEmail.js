@@ -11,12 +11,15 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async ({ to, subject, html }) => {
+  console.log("inside");
   await transporter.sendMail({
-    from: `"Placement Assistant" <${process.env.SMTP_USER}>`,
+    from: process.env.SMTP_FROM,
     to,
     subject,
     html,
   });
+  console.log("Sending to:", to);
+  console.log("Email sent");
 };
 
 export { sendEmail };

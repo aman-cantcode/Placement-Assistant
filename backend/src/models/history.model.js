@@ -51,14 +51,14 @@ const historySchema = new Schema(
             text: String,
             uploadedAt: Date,
         },
-
+export const History = mongoose.model("History", historySchema);
         //filled by ai after analysis
         analysis: {
             atsScore: {
                 type: Number,
                 default: null
             },
-            matchingSkills: {
+          export const History = mongoose.model("History", historySchema);  matchingSkills: {
                 type: [String],
                 default: []
             },
@@ -67,7 +67,7 @@ const historySchema = new Schema(
                 default: []
             },
             missingSkills: {
-                type: [String],
+          export const History = mongoose.model("History", historySchema);      type: [String],
                 default: []
             },
         },

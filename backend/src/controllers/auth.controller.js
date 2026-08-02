@@ -188,6 +188,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
         await user.save({ validateBeforeSave: false });
 
         const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${rawToken}`;
+        console.log("Reset link:", resetLink);
         await sendEmail({
             to: user.email,
             subject: "Reset your Placement Assistant password",
@@ -195,6 +196,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
              <p>Click <a href=\"${resetLink}\">here</a> to reset your password.</p>
              <p>This link is valid for 15 minutes. If you didn't request this, just ignore this email.</p>`,
         }); 
+        
     }
 
     return res
