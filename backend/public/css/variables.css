@@ -1,0 +1,90 @@
+/*
+  Design tokens for Placement Assistant.
+  Everything else in the stylesheet reads from these custom properties,
+  so the whole look of the app can be retuned from this one file.
+*/
+
+:root {
+  /* ---- color: paper & ink ---- */
+  --paper: #F1F2EC;          /* page background, cool grey-green off-white */
+  --paper-dim: #E8EAE1;      /* slightly deeper paper, alternate sections */
+  --surface: #FFFFFF;        /* cards, inputs, raised panels */
+  --surface-soft: #FAFAF7;   /* subtle inset surfaces (code/roadmap blocks) */
+  --ink: #171B19;            /* primary text */
+  --ink-soft: #545B50;       /* secondary text */
+  --ink-faint: #8A9084;      /* placeholders, disabled, timestamps */
+  --line: #DFE1D6;           /* default borders / dividers */
+  --line-strong: #C8CCBC;    /* input borders, stronger separation */
+
+  /* ---- color: brand accents ---- */
+  --evergreen: #1E6B52;
+  --evergreen-dark: #164F3D;
+  --evergreen-light: #E3EFE8;
+  --amber: #C1791E;
+  --amber-dark: #955C15;
+  --amber-light: #F7EAD3;
+  --rust: #AE4530;
+  --rust-dark: #8C3624;
+  --rust-light: #F5DFD8;
+
+  /* ---- semantic aliases ---- */
+  --color-accent: var(--evergreen);
+  --color-accent-hover: var(--evergreen-dark);
+  --color-warn: var(--amber);
+  --color-danger: var(--rust);
+  --focus-ring: 0 0 0 3px rgba(30, 107, 82, 0.28);
+
+  /* ---- type families ---- */
+  --font-display: "Fraunces", "Iowan Old Style", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---- type scale ---- */
+  --fs-hero: clamp(2.5rem, 2rem + 2vw, 4rem);
+  --fs-h1: clamp(1.75rem, 1.55rem + 0.8vw, 2.25rem);
+  --fs-h2: 1.375rem;
+  --fs-h3: 1.0625rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-tiny: 0.75rem;
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-normal: 1.6;
+
+  /* ---- spacing scale (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* ---- radii ---- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  /* ---- shadow ---- */
+  --shadow-sm: 0 1px 2px rgba(23, 27, 25, 0.06), 0 1px 1px rgba(23, 27, 25, 0.05);
+  --shadow-md: 0 12px 28px -12px rgba(23, 27, 25, 0.22);
+  --shadow-lg: 0 28px 60px -20px rgba(23, 27, 25, 0.28);
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.22, 0.8, 0.2, 1);
+  --transition-fast: 150ms var(--ease);
+  --transition-base: 240ms var(--ease);
+
+  /* ---- layout ---- */
+  --content-width: 1120px;
+  --content-width-narrow: 720px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+}
