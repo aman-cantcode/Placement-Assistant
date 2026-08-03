@@ -4,7 +4,7 @@ from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
-from app.chains.roadmap_chain import model, embeddings
+from app.llm import model, embeddings, backup_model
 
 questions_vectorstore = Chroma(
     collection_name="interview_questions",
@@ -52,7 +52,9 @@ questions_prompt =  ChatPromptTemplate.from_messages([
     ),
 ])
 
-structured_model = model.with_structured_output(QuestionsResult)
+structured_model = model.with_structured_output(QuestionsResult).with_fallbacks(
+    [backup_model.with_structured_output(QuestionsResult)]
+)
 
 questions_chain = (
     RunnableLambda(retrieve_and_format_questions)

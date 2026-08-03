@@ -1,15 +1,12 @@
-from app.config import *
-
-from typing import List
-from pydantic import BaseModel, Field
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
+
+from app.llm import model, backup_model
 from app.schemas import AnalysisResult
 
 
-model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-
-structured_model = model.with_structured_output(AnalysisResult)
+structured_model = model.with_structured_output(AnalysisResult).with_fallbacks(
+    [backup_model.with_structured_output(AnalysisResult)]
+)
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are an ATS evaluating how well a resume matches a job description."),

@@ -1,17 +1,12 @@
 from app.config import CHROMA_DB_DIR
+from app.llm import model, backup_model, embeddings
 
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
 
-model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
-
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-001"
-)
 
 vectorstore = Chroma(
     collection_name="learning_resources",
@@ -59,5 +54,6 @@ chain = (
     RunnableLambda(retrieve_and_format)
     | prompt
     | model
+    | model.with_fallbacks([backup_model])
     | StrOutputParser()
 )
