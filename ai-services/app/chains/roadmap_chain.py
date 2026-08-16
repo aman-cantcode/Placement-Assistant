@@ -49,11 +49,9 @@ prompt = ChatPromptTemplate.from_messages([
     ),
 ])
 
-
 chain = (
     RunnableLambda(retrieve_and_format)
     | prompt
-    | model
     | model.with_fallbacks([backup_model])
     | StrOutputParser()
 )
