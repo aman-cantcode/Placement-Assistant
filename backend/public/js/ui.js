@@ -93,12 +93,69 @@ function initials(name) {
     .join("");
 }
 
-/** Escapes text, then re-introduces **bold** / *italic* as real tags. Safe because
- *  the tags are only ever added around already-escaped content. */
+/** Escapes text, then safely re-introduces basic markdown formatting. */
 function inlineFormat(text) {
   return esc(text)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[^*])\*(?!\*)([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
+}
+
+function formatMarkdown(raw) {
+  const lines = String(raw ?? "").split(/\r?\n/);
+  let html = "";
+  let listOpen = false;
+
+  const closeList = () => {
+    if (listOpen) {
+      html += "</ul>";
+      listOpen = false;
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      closeList();
+      continue;
+    }
+
+    const heading = line.match(/^#{1,6}\s+(.+)$/);
+    if (heading) {
+      closeList();
+      const level = Math.min(heading[0].match(/^#+/)[0].length, 6);
+      html += `<h${level}>${inlineFormat(heading[1])}</h${level}>`;
+      continue;
+    }
+
+    const bullet = line.match(/^[-*•]\s+(.+)$/);
+    if (bullet) {
+      if (!listOpen) {
+        html += "<ul>";
+        listOpen = true;
+      }
+      html += `<li>${inlineFormat(bullet[1])}</li>`;
+      continue;
+    }
+
+    const numbered = line.match(/^\d+[.)]\s+(.+)$/);
+    if (numbered) {
+      if (!listOpen) {
+        html += "<ol>";
+        listOpen = true;
+      }
+      html += `<li>${inlineFormat(numbered[1])}</li>`;
+      continue;
+    }
+
+    closeList();
+    html += `<p>${inlineFormat(line)}</p>`;
+  }
+
+  closeList();
+  return html;
 }
 
 /**

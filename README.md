@@ -147,8 +147,8 @@ The backend runs on `http://localhost:8080`.
 
 ```bash
 cd ai-service
-python3 -m venv venv
-source venv/bin/activate      # venv\Scripts\activate on Windows
+python3 -m venv .venv
+source .venv/bin/activate      # venv\Scripts\activate on Windows
 pip install -r requirements.txt
 cp .env.example .env          # fill in the values — see Environment Variables below
 ```

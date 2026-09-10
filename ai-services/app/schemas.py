@@ -44,14 +44,10 @@ class RateRequest(BaseModel):
 
 
 class RateResult(BaseModel):
-    rating: int = Field(
-        ge=0,
-        le=10,
+    rating: int = Field(ge=0, le=10,
         description="Score from 0 to 10 rating the quality of the interview answer",
     )
-    feedback: str = Field(
-        description="2-3 sentences of specific, actionable feedback on the answer",
-    )
+    feedback: str = Field(description="2-3 sentences of specific, actionable feedback on the answer",)
 
 
 class RateResponse(BaseModel):

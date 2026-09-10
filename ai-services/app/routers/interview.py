@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
-from app.schemas import QuestionsRequest, RateRequest, RateResponse, RateResult
+from app.schemas import QuestionsRequest, QuestionsResponse, RateRequest, RateResponse, RateResult
 from app.security import verify_internal_key
-from app.chains.questions_chain import questions_chain, QuestionsResult
+from app.chains.questions_chain import questions_chain
 
 router = APIRouter(
     dependencies=[Depends(verify_internal_key)],
 )
 
-@router.post("/interview/questions", response_model=QuestionsResult)
+@router.post("/interview/questions", response_model=QuestionsResponse)
 def generate_questions(request: QuestionsRequest):
     return questions_chain.invoke({
         "resume_text": request.resume_text,

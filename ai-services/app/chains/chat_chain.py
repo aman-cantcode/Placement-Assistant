@@ -45,11 +45,9 @@ prompt = ChatPromptTemplate.from_messages([
 
         If the user asks something unrelated, politely refuse.
 
-        RESUME:
-        {resume_text}
+        RESUME: {resume_text}
 
-        JOB DESCRIPTION:
-        {jd_text}
+        JOB DESCRIPTION: {jd_text}
         """,
     ),
     MessagesPlaceholder("history"),

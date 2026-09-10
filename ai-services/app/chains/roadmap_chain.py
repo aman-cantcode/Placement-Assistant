@@ -17,7 +17,7 @@ vectorstore = Chroma(
 retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
 
-def format_docs(docs):
+def format_docs(docs):       #Documents -> Text
     return "\n".join(
         f"- {doc.metadata['title']} ({doc.metadata['url']})"
         for doc in docs

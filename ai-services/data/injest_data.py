@@ -2,11 +2,12 @@ import json
 import time
 from pathlib import Path
 
-import app.config
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai._common import GoogleGenerativeAIError
+
+from app.llm import embeddings
+from app.config import CHROMA_DB_DIR
 
 #run from ai-services as module 
 
@@ -14,15 +15,11 @@ DATA_DIR = Path(__file__).resolve().parent
 
 RESOURCES_FILE = DATA_DIR / "learning-resources-dataset.json"
 QUESTIONS_FILE = DATA_DIR / "interview-questions-dataset.json"
-PERSIST_DIR = DATA_DIR / "chroma_db"
+PERSIST_DIR = CHROMA_DB_DIR
 
 BATCH_SIZE = 20
 RETRY_DELAY = 65
 
-
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-001"
-)
 
 
 def load_json(path: Path):
@@ -76,7 +73,7 @@ def ingest(collection_name: str, documents: list[Document]):
     total = len(documents)
 
     for start in range(0, total, BATCH_SIZE):
-        batch = documents[start:start + BATCH_SIZE]
+        batch = documents[start : start + BATCH_SIZE]
 
         while True:
             try:
@@ -99,7 +96,7 @@ def main():
     ingest("learning_resources", build_resource_documents())
     ingest("interview_questions", build_question_documents())
 
-    print("\n✓ Vector database ready.")
+    print("\n Vector database ready.")
 
 
 if __name__ == "__main__":

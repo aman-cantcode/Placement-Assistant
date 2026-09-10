@@ -236,7 +236,7 @@ function appendMessage(role, content) {
   const messagesEl = document.getElementById("chat-messages");
   const bubble = document.createElement("div");
   bubble.className = `msg ${role === "user" ? "msg-user" : "msg-assistant"}`;
-  bubble.textContent = content;
+  bubble.innerHTML = role === "assistant" ? formatMarkdown(content) : esc(content);
   messagesEl.appendChild(bubble);
   return bubble;
 }

@@ -1,15 +1,16 @@
 from typing import List
-from pydantic import BaseModel, Field
 from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
 from app.llm import model, embeddings, backup_model
+from app.schemas import QuestionsResponse
+from app.config import CHROMA_DB_DIR
 
 questions_vectorstore = Chroma(
     collection_name="interview_questions",
     embedding_function=embeddings,
-    persist_directory="./chroma_db"
+    persist_directory=CHROMA_DB_DIR
 )
 questions_retriever = questions_vectorstore.as_retriever(search_kwargs={"k": 8})
 
@@ -24,10 +25,6 @@ def retrieve_and_format_questions(input_dict):
         "jd_text": input_dict["jd_text"],
         "context": format_questions(docs)
     }
-
-
-class QuestionsResult(BaseModel):
-    questions: List[str] = Field(description="Exactly 6 interview questions for this candidate and job")
 
 
 questions_prompt =  ChatPromptTemplate.from_messages([
@@ -52,8 +49,8 @@ questions_prompt =  ChatPromptTemplate.from_messages([
     ),
 ])
 
-structured_model = model.with_structured_output(QuestionsResult).with_fallbacks(
-    [backup_model.with_structured_output(QuestionsResult)]
+structured_model = model.with_structured_output(QuestionsResponse).with_fallbacks(
+    [backup_model.with_structured_output(QuestionsResponse)]
 )
 
 questions_chain = (
