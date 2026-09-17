@@ -93,70 +93,195 @@ function initials(name) {
     .join("");
 }
 
-/** Escapes text, then safely re-introduces basic markdown formatting. */
+
+
 function inlineFormat(text) {
   return esc(text)
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(
+      /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    )
+    // Inline code
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // Bold
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/(^|[^*])\*(?!\*)([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
+    // Italic
+    .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1<em>$2</em>");
 }
 
+
 function formatMarkdown(raw) {
-  const lines = String(raw ?? "").split(/\r?\n/);
+  let text = String(raw ?? "");
+
+  text = text.replace(/\\([\\`*_[\]()>#+\-.!|])/g, "$1");
+
+  const lines = text.split(/\r?\n/);
+
   let html = "";
   let listOpen = false;
+  let orderedListOpen = false;
+  let tableRows = [];
+  let inTable = false;
 
-  const closeList = () => {
+  const closeLists = () => {
     if (listOpen) {
       html += "</ul>";
       listOpen = false;
     }
+
+    if (orderedListOpen) {
+      html += "</ol>";
+      orderedListOpen = false;
+    }
   };
 
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
+  const flushTable = () => {
+    if (!inTable) return;
+
+    html += "<table><tbody>";
+
+    tableRows.forEach((row, index) => {
+      const cells = row
+        .split("|")
+        .slice(1, -1)
+        .map(cell => cell.trim());
+
+      const tag = index === 0 ? "th" : "td";
+
+      html += "<tr>";
+
+      cells.forEach(cell => {
+        html += `<${tag}>${inlineFormat(cell)}</${tag}>`;
+      });
+
+      html += "</tr>";
+    });
+
+    html += "</tbody></table>";
+
+    tableRows = [];
+    inTable = false;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
 
     if (!line) {
-      closeList();
+      closeLists();
+      flushTable();
       continue;
     }
 
-    const heading = line.match(/^#{1,6}\s+(.+)$/);
+    // Markdown table
+    if (
+      line.startsWith("|") &&
+      line.endsWith("|")
+    ) {
+      const nextLine = lines[i + 1]?.trim() || "";
+
+      // Detect table header + separator
+      if (
+        /^\|[\s|:-]+\|$/.test(nextLine)
+      ) {
+        closeLists();
+
+        inTable = true;
+
+        tableRows.push(line);
+
+        // Skip separator row
+        i++;
+
+        continue;
+      }
+
+      if (inTable) {
+        tableRows.push(line);
+        continue;
+      }
+    }
+
+    flushTable();
+
+    // Headings: # ## ### #### etc.
+    const heading = line.match(/^(#{1,6})\s+(.+)$/);
+
     if (heading) {
-      closeList();
-      const level = Math.min(heading[0].match(/^#+/)[0].length, 6);
-      html += `<h${level}>${inlineFormat(heading[1])}</h${level}>`;
+      closeLists();
+
+      const level = heading[1].length;
+
+      html += `<h${level}>${inlineFormat(heading[2])}</h${level}>`;
+
       continue;
     }
 
+    // Horizontal rule
+    if (/^([-*_])(?:\s*\1){2,}$/.test(line)) {
+      closeLists();
+
+      html += "<hr>";
+
+      continue;
+    }
+
+    // Blockquote
+    const quote = line.match(/^>\s*(.*)$/);
+
+    if (quote) {
+      closeLists();
+
+      html += `<blockquote>${inlineFormat(quote[1])}</blockquote>`;
+
+      continue;
+    }
+
+    // Unordered list
     const bullet = line.match(/^[-*•]\s+(.+)$/);
+
     if (bullet) {
       if (!listOpen) {
+        closeLists();
+
         html += "<ul>";
+
         listOpen = true;
       }
+
       html += `<li>${inlineFormat(bullet[1])}</li>`;
+
       continue;
     }
 
+    // Ordered list
     const numbered = line.match(/^\d+[.)]\s+(.+)$/);
+
     if (numbered) {
-      if (!listOpen) {
+      if (!orderedListOpen) {
+        closeLists();
+
         html += "<ol>";
-        listOpen = true;
+
+        orderedListOpen = true;
       }
+
       html += `<li>${inlineFormat(numbered[1])}</li>`;
+
       continue;
     }
 
-    closeList();
+    // Normal paragraph
+    closeLists();
+
     html += `<p>${inlineFormat(line)}</p>`;
   }
 
-  closeList();
+  closeLists();
+  flushTable();
+
   return html;
 }
+
 
 /**
  * The roadmap comes back from the AI as plain text ("simple headings and
