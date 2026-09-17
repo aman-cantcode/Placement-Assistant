@@ -1,19 +1,12 @@
-from typing import List
-from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
-from app.llm import model, embeddings, backup_model
+from app.llm import structured_model
 from app.schemas import QuestionsResponse
-from app.config import CHROMA_DB_DIR
+from app.retrieval import make_retriever
 
-questions_vectorstore = Chroma(
-    collection_name="interview_questions",
-    embedding_function=embeddings,
-    persist_directory=CHROMA_DB_DIR
-)
-questions_retriever = questions_vectorstore.as_retriever(search_kwargs={"k": 8})
 
+questions_retriever = make_retriever("interview_questions", k = 8)
 
 def format_questions(docs):
     return "\n".join(f"- [{d.metadata['skill']}] {d.metadata['question']}" for d in docs)
@@ -49,12 +42,9 @@ questions_prompt =  ChatPromptTemplate.from_messages([
     ),
 ])
 
-structured_model = model.with_structured_output(QuestionsResponse).with_fallbacks(
-    [backup_model.with_structured_output(QuestionsResponse)]
-)
 
 questions_chain = (
     RunnableLambda(retrieve_and_format_questions)
     | questions_prompt
-    | structured_model
+    | structured_model(QuestionsResponse)
 )

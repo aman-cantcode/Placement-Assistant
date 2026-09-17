@@ -3,7 +3,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
 
-from app.llm import model, backup_model
+from app.llm import model
 
 
 def convert_to_langchain_messages(messages):
@@ -60,7 +60,7 @@ prompt = ChatPromptTemplate.from_messages([
 chat_chain = (
     RunnableLambda(prepare_chat_input)
     | prompt
-    | model.with_fallbacks([backup_model])
+    | model
     | StrOutputParser()
 )
 

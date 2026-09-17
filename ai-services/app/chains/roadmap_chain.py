@@ -1,20 +1,12 @@
-from app.config import CHROMA_DB_DIR
-from app.llm import model, backup_model, embeddings
+from app.llm import model
+from app.retrieval import make_retriever
 
-from langchain_chroma import Chroma
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
 
-
-vectorstore = Chroma(
-    collection_name="learning_resources",
-    embedding_function=embeddings,
-    persist_directory=str(CHROMA_DB_DIR),
-)
-
-retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+resources_retriever = make_retriever("learning_resources", k = 5)
 
 
 def format_docs(docs):       #Documents -> Text
@@ -26,7 +18,7 @@ def format_docs(docs):       #Documents -> Text
 
 def retrieve_and_format(inputs):
     query = ", ".join(inputs["missing_skills"])
-    docs = retriever.invoke(query)
+    docs = resources_retriever.invoke(query)
 
     return {
         "resume_text": inputs["resume_text"],
@@ -52,6 +44,6 @@ prompt = ChatPromptTemplate.from_messages([
 chain = (
     RunnableLambda(retrieve_and_format)
     | prompt
-    | model.with_fallbacks([backup_model])
+    | model
     | StrOutputParser()
 )

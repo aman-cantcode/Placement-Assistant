@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from app.schemas import RateResult
 
-from app.llm import model, backup_model
+from app.llm import structured_model
 
 rate_prompt = ChatPromptTemplate.from_messages([
     (
@@ -22,8 +22,5 @@ rate_prompt = ChatPromptTemplate.from_messages([
     ),
 ])
 
-structured_rate_model = model.with_structured_output(RateResult).with_fallbacks(
-    [backup_model.with_structured_output(RateResult)]
-)
 
-rate_chain = rate_prompt | structured_rate_model
+rate_chain = rate_prompt | structured_model(RateResult)

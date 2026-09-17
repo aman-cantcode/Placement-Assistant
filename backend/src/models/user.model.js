@@ -38,7 +38,7 @@ const userSchema = new Schema(
             default: []
         },
         resume: {
-            filename: {
+            fileName: {
                 type: String,
             },
             text: {
